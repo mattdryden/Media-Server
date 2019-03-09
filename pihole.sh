@@ -3,4 +3,4 @@
 echo "Create pihole"
 #docker stop pihole && docker rm pihole
 
-docker run -d --restart unless-stopped --name sonarr --link=sabnzbd:sabnzbd -p 8989:8989 -e PUID=1000 -e PGID=1000 -v /dev/rtc:/dev/rtc:ro -v /mnt/data/config/sonarr:/config -v /mnt/data/media/TV/:/tv -v /mnt/data/downloads/complete:/complete-downloads linuxserver/sonarr
+docker run -d --restart unless-stopped    --name pihole     -p 53:53/tcp -p 53:53/udp     -p 80:80     -p 443:443     -e TZ="Europe/London"     -v "/mnt/data/config/pihole/pihole/:/etc/pihole/"     -v "/mnt/data/config/pihole/dnsmasq.d/:/etc/dnsmasq.d/"     --dns=127.0.0.1 --dns=1.1.1.1     --restart=unless-stopped     pihole/pihole:latest

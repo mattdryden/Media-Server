@@ -1,0 +1,46 @@
+#!/bin/bash
+
+DATA_PATH="/media/BackupHub/server/data/"
+PUID=1000
+PGID=1000
+
+function launch_container() {
+    echo "Launching $1!"
+    docker run -d --restart unless-stopped --name $1 $2
+}
+
+function sonarr() {
+    launch_container "sonarr" "--link=sabnzbd:sabnzbd -p 8989:8989 -e PUID=$PUID -e PGID=$PGID -v /dev/rtc:/dev/rtc:ro -v ${DATA_PATH}config/sonarr:/config -v ${DATA_PATH}media/TV/:/tv -v ${DATA_PATH}downloads/complete:/complete-downloads linuxserver/sonarr"
+}
+
+function radarr() {
+    launch_container "radarr" "--link=sabnzbd:sabnzbd -p 7878:7878 -e PUID=$PUID -e PGID=$PGID -v /dev/rtc:/dev/rtc:ro -v ${DATA_PATH}config/radarr:/config -v ${DATA_PATH}media/Movies/:/movies -v ${DATA_PATH}downloads/complete:/complete-downloads linuxserver/radarr"
+}
+
+function sabnzbd() {
+    launch_container "sabnzbd" "-v /etc/localtime:/etc/localtime:ro -v ${DATA_PATH}config/sabnzbd:/config -v ${DATA_PATH}downloads/complete:/complete-downloads -v ${DATA_PATH}downloads/incomplete:/incomplete-downloads -e PGID=$PGID -e PUID=$PUID -p 8080:8080 -p 9090:9090 linuxserver/sabnzbd"
+}
+
+function plex() {
+    launch_container "plex" "-p 32400:32400 -e VERSION=latest -e PUID=$PUID -e PGID=$PGID -v ${DATA_PATH}tmp:/transcode -v ${DATA_PATH}config/plex:/config -v ${DATA_PATH}media:/data/media -e NVIDIA_VISIBLE_DEVICES=all --runtime=nvidia linuxserver/plex"
+}
+
+function lidarr() {
+    launch_container "lidarr" "--link=sabnzbd:sabnzbd -p 8686:8686 -e PUID=$PUID -e PGID=$PGID -v /dev/rtc:/dev/rtc:ro -v ${DATA_PATH}config/lidarr:/config -v ${DATA_PATH}media/Music/:/music -v ${DATA_PATH}downloads/complete/:/complete-downloads linuxserver/lidarr"
+}
+
+function all() {
+    sabnzbd
+    sonarr
+    radarr
+    plex
+}
+
+if [ $# -eq 0 ]
+    then
+        echo "No arguments supplied"
+    else
+        $1
+fi
+
+

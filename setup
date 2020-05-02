@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DATA_PATH="/media/BackupHub/server/data/"
+DATA_PATH="/mnt/Data/server/data/"
 PUID=1000
 PGID=1000
 
@@ -22,11 +22,19 @@ function sabnzbd() {
 }
 
 function plex() {
-    launch_container "plex" "-p 32400:32400 -e VERSION=latest -e PUID=$PUID -e PGID=$PGID -v ${DATA_PATH}tmp:/transcode -v ${DATA_PATH}config/plex:/config -v ${DATA_PATH}media:/data/media -e NVIDIA_VISIBLE_DEVICES=all --runtime=nvidia linuxserver/plex"
+    launch_container "plex" "-p 32400:32400 -e VERSION=latest -e PUID=$PUID -e PGID=$PGID -v ${DATA_PATH}tmp:/transcode -v ${DATA_PATH}config/plex:/config -v ${DATA_PATH}media:/data/media --gpus all linuxserver/plex"
 }
 
 function lidarr() {
     launch_container "lidarr" "--link=sabnzbd:sabnzbd -p 8686:8686 -e PUID=$PUID -e PGID=$PGID -v /dev/rtc:/dev/rtc:ro -v ${DATA_PATH}config/lidarr:/config -v ${DATA_PATH}media/Music/:/music -v ${DATA_PATH}downloads/complete/:/complete-downloads linuxserver/lidarr"
+}
+
+function ombi() {
+    launch_container "ombi" "-e PUID=$PUID -e PGID=$PGID -e TZ=Europe/London -p 3579:3579 -v ${DATA_PATH}config/ombi:/config linuxserver/ombi"
+}
+
+function tautulli() {
+    launch_container "tautulli" "-e PUID=$PUID -e PGID=$PGID -e TZ=Europe/London -p 8181:8181 -v ${DATA_PATH}config/tautulli:/config -v ${DATA_PATH}config/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs linuxserver/tautulli"
 }
 
 function all() {
@@ -34,6 +42,9 @@ function all() {
     sonarr
     radarr
     plex
+    lidarr
+    ombi
+    tautulli
 }
 
 if [ $# -eq 0 ]

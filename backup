@@ -33,7 +33,12 @@ function makeTemp() {
 function replicateScript() {
     echo "Replicating backup script..."
     mkdir -p ${tempPath}home/${user}
-    cp -a ${currentPath}/${script} ${tempPath}home/${user}/${script}
+    #cp -a ${currentPath}/${script} ${tempPath}home/${user}/${script}
+}
+
+function copyTasks() {
+    echo "Copying tasks to speedup deployment..."
+    rsync -a ${currentPath}/tasks/ ${tempPath}home/${user}/tasks/
 }
 
 function restoreInstructions() {
@@ -63,7 +68,8 @@ function configSsh() {
     cp -a /etc/ssh/ssh_config ${tempPath}etc/ssh/sshd_config
 
     mkdir -p  ${tempPath}home/${user}/.ssh
-    cp -a /home/${user}/.ssh/authorized_keys ${tempPath}home/${user}/.ssh/authorized_keys
+    #cp -a /home/${user}/.ssh/authorized_keys ${tempPath}home/${user}/.ssh/authorized_keys
+    rsync -a /home/${user}/.ssh/ ${tempPath}home/${user}/.ssh/
 }
 
 function configNetatalk() {
@@ -138,6 +144,7 @@ function main() {
 
     makeTemp
     replicateScript
+    copyTasks
     configFiles
     patches
     docker

@@ -38,7 +38,7 @@ function replicateScript() {
 
 function copyTasks() {
     echo "Copying tasks to speedup deployment..."
-    rsync -a ${currentPath}/tasks/ ${tempPath}home/${user}/tasks/
+    rsync -a /home/${user}/tasks/ ${tempPath}home/${user}/tasks/
 }
 
 function restoreInstructions() {

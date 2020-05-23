@@ -1,0 +1,154 @@
+#!/bin/bash 
+
+## Name: Server backup script
+## Version: 1.1
+## Author: Matt Dryden
+## Date: 24/05/2020
+
+path="/mnt/backups/"
+dockerConfigPath="/mnt/docker/"
+dockerMediaPath="/mnt/media/"
+date=$(date +%Y-%m-%d)
+dateDisplay=$(date +%d-%m-%Y)
+backupPath="${path}${date}/"
+tempPath="/tmp/${date}/"
+user="matt"
+script=$(basename "$0")
+currentPath=$(pwd)
+passphrase=""
+
+## TODO:
+#  - Make passphrase a env or if not supplied ask
+#  - Toggle encryption
+#  - Split into functions to make it easier
+#  - In output include decryption instructions
+#
+
+function makeTemp() {
+    echo "Making temp backup folder..."
+    [ -d "${tempPath}" ] && rm -rf ${tempPath}
+    mkdir -p ${tempPath}
+}
+
+function replicateScript() {
+    echo "Replicating backup script..."
+    mkdir -p ${tempPath}home/${user}
+    cp -a ${currentPath}/${script} ${tempPath}home/${user}/${script}
+}
+
+function restoreInstructions() {
+    echo "Adding restore instructions..."
+}
+
+function configFiles() {
+    echo "Backing up config files..."
+    configCron
+    configMounts
+    configSsh
+    configNetatalk
+}
+
+function configCron() {
+    mkdir -p ${tempPath}var/spool/cron/crontabs
+    cp -a /var/spool/cron/crontabs/* ${tempPath}var/spool/cron/crontabs/
+}
+
+function configMounts() {
+    mkdir -p ${tempPath}etc
+    cp -a /etc/fstab ${tempPath}etc/fstab
+}
+
+function configSsh() {
+    mkdir -p ${tempPath}etc/ssh
+    cp -a /etc/ssh/ssh_config ${tempPath}etc/ssh/sshd_config
+
+    mkdir -p  ${tempPath}home/${user}/.ssh
+    cp -a /home/${user}/.ssh/authorized_keys ${tempPath}home/${user}/.ssh/authorized_keys
+}
+
+function configNetatalk() {
+    mkdir -p ${tempPath}etc/netatalk
+    cp -a /etc/netatalk/afp.conf ${tempPath}etc/netatalk/afp.conf
+}
+
+function patches() {
+    echo "Backuping up Patches script..."
+    # cd /home/${user}/patches/ && tar -cpzf ${tempPath}patches.tar.gz --exclude=node_modules . && cd ${currentPath}
+    rsync -a --exclude=node_modules /home/${user}/patches/ ${tempPath}home/${user}/patches/
+}
+
+function docker() {
+    echo "Backing up docker configs..."
+    # cd ${dockerConfigPath} && tar -cpzf ${tempPath}docker.config.tar.gz . && cd ${currentPath}
+    mkdir -p ${tempPath}${dockerConfigPath:1}config/
+    rsync -a ${dockerConfigPath}config/ ${tempPath}${dockerConfigPath:1}config/
+    cp -a /home/${user}/setup ${tempPath}home/${user}/setup
+
+    mkdir -p ${tempPath}${dockerConfigPath}tmp
+    mkdir -p ${tempPath}${dockerConfigPath}downloads/complete
+    mkdir -p ${tempPath}${dockerConfigPath}downloads/incomplete
+    mkdir -p ${tempPath}${dockerMediaPath}TV
+    mkdir -p ${tempPath}${dockerMediaPath}Movies
+    mkdir -p ${tempPath}${dockerMediaPath}Music
+}
+
+function createArchive() {
+    echo "Creating archive..."
+    cd ${tempPath}
+    tar -cpzf ${tempPath}backup-${date}.tar.gz --exclude=backup-${date}.tar.gz .
+}
+
+function cleanupFiles() {
+    # #rm -v !("backup-${date}.tar.gz.gpg")
+    # #find . ! -name 'backup-${date}.tar.gz.gpg' -type f -exec rm -f {} +
+    # #find . ! -name 'backup-${date}.tar.gz.gpg' -type d -exec rm -rf {} +
+    echo "Cleaning up files..."
+    cd ${tempPath}
+    rm -rf {etc,crontabs,home,var,backup,mnt}
+}
+
+function cleanupTemp() {
+    echo "Cleaning up temp..."
+    rm -rf ${tempPath}
+}
+
+function moveBackup() {
+    echo "Moving backup to final destination..."
+    mv ${tempPath}backup-${date}.tar.gz /mnt/backups/backup-${date}.tar.gz
+}
+
+function setMotd() {
+    echo "Adding to motd..."
+cat > /etc/update-motd.d/99-backup <<EOF
+#!/bin/sh
+
+echo "Last backup completed ${dateDisplay} with a size of ${backupSize}\n\n"
+EOF
+chmod a+x /etc/update-motd.d/*
+}
+
+function encryptBackup() {
+    echo "Encrypting backup..."
+    # To decrypt gpg --pinentry loopback -d -o out.file in.file
+    # cd ${backupPath} && echo ${passphrase} | gpg --batch --yes --passphrase-fd 0 -c ${backupPath}backup-${date}.tar.gz
+}
+
+function main() {
+    echo "Starting backup..."
+
+    makeTemp
+    replicateScript
+    configFiles
+    patches
+    docker
+    createArchive
+    backupSize=$(du -sh ${tempPath}backup-${date}.tar.gz | cut -f1)
+    cleanupFiles
+    moveBackup
+    cleanupTemp
+    setMotd
+
+    echo "Backup complete with a size of ${backupSize}"
+}
+
+main

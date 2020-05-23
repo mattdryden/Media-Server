@@ -1,5 +1,10 @@
-### Media Server Tasks
-Tasks I perform on my media server often
+### Media Server
+Tasks I perform on my media server often - initialisation and backup
+
+# Backup 
+```bash
+    ./backup
+```
 
 # All
 ```bash

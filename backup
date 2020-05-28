@@ -15,6 +15,7 @@ tempPath="/tmp/${date}/"
 user="matt"
 script=$(basename "$0")
 currentPath=$(pwd)
+maxBackups="7"
 passphrase=""
 
 ## TODO:
@@ -139,6 +140,12 @@ function encryptBackup() {
     # cd ${backupPath} && echo ${passphrase} | gpg --batch --yes --passphrase-fd 0 -c ${backupPath}backup-${date}.tar.gz
 }
 
+function removeOldBackups() {
+    echo "Removing old backups..."
+    cd $backupPath
+    find ./ -name "backup-*-*-*tar.gz" -mtime +${maxBackups} -exec rm -rf {} \;
+}
+
 function main() {
     echo "Starting backup..."
 
@@ -154,6 +161,7 @@ function main() {
     moveBackup
     cleanupTemp
     setMotd
+    removeOldBackups
 
     echo "Backup complete with a size of ${backupSize}"
 }

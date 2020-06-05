@@ -37,7 +37,7 @@ function ombi() {
 }
 
 function tautulli() {
-    launch_container "tautulli" "-e PUID=$PUID -e PGID=$PGID -e TZ=Europe/London -p 8181:8181 -v ${CONFIG_PATH}/tautulli:/config -v ${CONFIG_PATH}/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs linuxserver/tautulli"
+    echo launch_container "tautulli" "-e PUID=$PUID -e PGID=$PGID -e TZ=Europe/London -p 8181:8181 -v ${CONFIG_PATH}/tautulli:/config -v ${CONFIG_PATH}/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs linuxserver/tautulli" | bash
 }
 
 function pihole() {

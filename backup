@@ -105,6 +105,7 @@ function docker() {
 
     mkdir -p ${tempPath}${dockerConfigPath}tmp
     mkdir -p ${tempPath}${dockerConfigPath}downloads/complete
+    mkdir -p ${tempPath}${dockerConfigPath}downloads/nzb
     mkdir -p ${tempPath}${dockerConfigPath}downloads/incomplete
     mkdir -p ${tempPath}${dockerMediaPath}TV
     mkdir -p ${tempPath}${dockerMediaPath}Movies

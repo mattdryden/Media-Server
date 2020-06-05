@@ -53,6 +53,7 @@ function kill() {
 }
 
 function all() {
+    hydra
     sabnzbd
     sonarr
     radarr
@@ -61,7 +62,6 @@ function all() {
     ombi
     pihole
     tautulli
-    hydra
 }
 
 if [ $# -eq 0 ]

@@ -52,6 +52,8 @@ function configFiles() {
     configMounts
     configSsh
     configNetatalk
+    configResolved
+    configUfw
 }
 
 function configCron() {
@@ -76,6 +78,16 @@ function configSsh() {
 function configNetatalk() {
     mkdir -p ${tempPath}etc/netatalk
     cp -a /etc/netatalk/afp.conf ${tempPath}etc/netatalk/afp.conf
+}
+
+function configResolved() {
+    mkdir -p ${tempPath}etc/systemd
+    cp -a /etc/systemd/resolved.conf ${tempPath}etc/systemd/resolved.conf
+}
+
+function configUfw() {
+    mkdir -p ${tempPath}etc/ufw
+    rsync -avP /etc/ufw/ ${tempPath}etc/ufw.
 }
 
 function patches() {

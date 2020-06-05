@@ -1,4 +1,4 @@
-�#!/bin/bash
+#!/bin/bash
 
 MEDIA_PATH="/mnt/media/"
 CONFIG_PATH="/mnt/docker/config/"
@@ -51,6 +51,7 @@ function all() {
     plex
     lidarr
     ombi
+    pihole
     tautulli
 }
 

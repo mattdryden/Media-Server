@@ -41,7 +41,7 @@ function tautulli() {
 }
 
 function pihole() {
-	launch_container "pihole" "-p 53:53/tcp -p 53:53/udp -p 80:80 -p 443:443 -e TZ=Europe/London -v "${CONFIG_PATH}/pihole/etc-pihole/:/etc/pihole/" -v "${CONFIG_PATH}/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/" --dns=127.0.0.1 --dns=8.8.8.8 --hostname pi.hole -e VIRTUAL_HOST="pi.hole" -e PROXY_LOCATION="pi.hole" -e ServerIP="127.0.0.1" pihole/pihole:latest"
+	launch_container "pihole" "-p 53:53/tcp -p 53:53/udp -p 81:80 -p 443:443 -e TZ=Europe/London -v "${CONFIG_PATH}/pihole/etc-pihole/:/etc/pihole/" -v "${CONFIG_PATH}/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/" --dns=127.0.0.1 --dns=8.8.8.8 --hostname pi.hole -e VIRTUAL_HOST="pi.hole" -e PROXY_LOCATION="pi.hole" -e ServerIP="127.0.0.1" pihole/pihole:latest"
 }
 
 function hydra() {

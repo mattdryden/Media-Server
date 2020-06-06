@@ -99,6 +99,7 @@ function patches() {
 
 function docker() {
     echo "Backing up docker configs..."
+    systemctl stop docker
     # cd ${dockerConfigPath} && tar -cpzf ${tempPath}docker.config.tar.gz . && cd ${currentPath}
     mkdir -p ${tempPath}${dockerConfigPath:1}config/
     rsync -a ${dockerConfigPath}config/ ${tempPath}${dockerConfigPath:1}config/
@@ -111,6 +112,7 @@ function docker() {
     mkdir -p ${tempPath}${dockerMediaPath}TV
     mkdir -p ${tempPath}${dockerMediaPath}Movies
     mkdir -p ${tempPath}${dockerMediaPath}Music
+    systemctl start docker
 }
 
 function createArchive() {

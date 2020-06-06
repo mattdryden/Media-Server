@@ -83,11 +83,12 @@ function configNetatalk() {
 function configResolved() {
     mkdir -p ${tempPath}etc/systemd
     cp -a /etc/systemd/resolved.conf ${tempPath}etc/systemd/resolved.conf
+    cp -a /etc/resolv.conf ${tempPath}etc/resolv.conf
 }
 
 function configUfw() {
     mkdir -p ${tempPath}etc/ufw
-    rsync -avP /etc/ufw/ ${tempPath}etc/ufw.
+    rsync -avP /etc/ufw/ ${tempPath}etc/ufw/
 }
 
 function patches() {
@@ -123,7 +124,7 @@ function cleanupFiles() {
     # #find . ! -name 'backup-${date}.tar.gz.gpg' -type f -exec rm -f {} +
     # #find . ! -name 'backup-${date}.tar.gz.gpg' -type d -exec rm -rf {} +
     echo "Cleaning up files..."
-    cd ${tempPath}
+    cd ${path}
     rm -rf {etc,crontabs,home,var,backup,mnt}
 }
 
@@ -134,7 +135,7 @@ function cleanupTemp() {
 
 function moveBackup() {
     echo "Moving backup to final destination..."
-    mv ${tempPath}backup-${date}.tar.gz /mnt/backups/backup-${date}.tar.gz
+    mv ${tempPath}backup-${date}.tar.gz ${path}backup-${date}.tar.gz
 }
 
 function setMotd() {
@@ -155,8 +156,17 @@ function encryptBackup() {
 
 function removeOldBackups() {
     echo "Removing old backups..."
-    cd $backupPath
+    cd ${path}
     find ./ -name "backup-*-*-*tar.gz" -mtime +${maxBackups} -exec rm -rf {} \;
+}
+
+function restore() {
+    echo "Restoring backup..."
+
+    # echo "Extracting latest archive...."
+
+    # sudo systemctl stop systemd-resolved
+    # systemctl disable systemd-resolved
 }
 
 function main() {

@@ -34,7 +34,8 @@ function makeTemp() {
 function replicateScript() {
     echo "Replicating backup script..."
     mkdir -p ${tempPath}home/${user}
-    #cp -a ${currentPath}/${script} ${tempPath}home/${user}/${script}
+    # cp -a /home/${user}/setup ${tempPath}home/${user}/setup
+    cp -a ${currentPath}/${script} ${tempPath}home/${user}/${script}
 }
 
 function copyTasks() {
@@ -94,7 +95,9 @@ function configUfw() {
 
 function configNginx() {
     mkdir -p ${tempPath}etc/nginx
+    mkdir -p ${tempPath}var/www/html
     rsync -avP /etc/nginx/ ${tempPath}etc/nginx/
+    rsync -avP /var/www/html/ ${tempPath}var/www/html/
 }
 
 function patches() {
@@ -108,9 +111,9 @@ function docker() {
     systemctl stop docker
     # cd ${dockerConfigPath} && tar -cpzf ${tempPath}docker.config.tar.gz . && cd ${currentPath}
     mkdir -p ${tempPath}${dockerConfigPath:1}config/
+    mkdir -p ${tempPath}etc/default/docker
+    cp -a /etc/default/docker ${tempPath}etc/default/docker
     rsync -a ${dockerConfigPath}config/ ${tempPath}${dockerConfigPath:1}config/
-    cp -a /home/${user}/setup ${tempPath}home/${user}/setup
-
     mkdir -p ${tempPath}${dockerConfigPath}tmp
     mkdir -p ${tempPath}${dockerConfigPath}downloads/complete
     mkdir -p ${tempPath}${dockerConfigPath}downloads/nzb

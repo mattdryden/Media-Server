@@ -8,15 +8,15 @@ PGID=0
 
 function launch_container() {
     echo "Launching $1!"
-    docker run -d --restart unless-stopped --name $1 $2
+    echo docker run -d --restart unless-stopped --name $1 $2 | bash
 }
 
 function sonarr() {
-    launch_container "sonarr" "--link=sabnzbd:sabnzbd --link=hydra:hydra -p 8989:8989 -e PUID=$PUID -e PGID=$PGID -v ${CONFIG_PATH}/sonarr:/config -v ${MEDIA_PATH}TV/:/tv -v ${DOWNLOAD_PATH}complete:/complete-downloads linuxserver/sonarr"
+    launch_container "sonarr" "--link=sabnzbd:sabnzbd -p 8989:8989 -e PUID=$PUID -e PGID=$PGID -v ${CONFIG_PATH}/sonarr:/config -v ${MEDIA_PATH}TV/:/tv -v ${DOWNLOAD_PATH}complete:/complete-downloads linuxserver/sonarr"
 }
 
 function radarr() {
-    launch_container "radarr" "--link=sabnzbd:sabnzbd --link=hydra:hydra -p 7878:7878 -e PUID=$PUID -e PGID=$PGID -v ${CONFIG_PATH}/radarr:/config -v ${MEDIA_PATH}Movies/:/movies -v ${DOWNLOAD_PATH}complete:/complete-downloads linuxserver/radarr"
+    launch_container "radarr" "--link=sabnzbd:sabnzbd -p 7878:7878 -e PUID=$PUID -e PGID=$PGID -v ${CONFIG_PATH}/radarr:/config -v ${MEDIA_PATH}Movies/:/movies -v ${DOWNLOAD_PATH}complete:/complete-downloads linuxserver/radarr"
 }
 
 function sabnzbd() {
@@ -29,7 +29,7 @@ function plex() {
 }
 
 function lidarr() {
-    launch_container "lidarr" "--link=sabnzbd:sabnzbd --link=hydra:hydra -p 8686:8686 -e PUID=$PUID -e PGID=$PGID -v ${CONFIG_PATH}/lidarr:/config -v ${MEDIA_PATH}Music/:/music -v ${DOWNLOAD_PATH}complete/:/complete-downloads linuxserver/lidarr"
+    launch_container "lidarr" "--link=sabnzbd:sabnzbd -p 8686:8686 -e PUID=$PUID -e PGID=$PGID -v ${CONFIG_PATH}/lidarr:/config -v ${MEDIA_PATH}Music/:/music -v ${DOWNLOAD_PATH}complete/:/complete-downloads linuxserver/lidarr"
 }
 
 function ombi() {
@@ -37,7 +37,7 @@ function ombi() {
 }
 
 function tautulli() {
-    echo launch_container "tautulli" "-e PUID=$PUID -e PGID=$PGID -e TZ=Europe/London -p 8181:8181 -v ${CONFIG_PATH}/tautulli:/config -v ${CONFIG_PATH}/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs linuxserver/tautulli" | bash
+    launch_container "tautulli" "-e PUID=$PUID -e PGID=$PGID -e TZ=Europe/London -p 8181:8181 -v ${CONFIG_PATH}/tautulli:/config -v ${CONFIG_PATH}/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs linuxserver/tautulli"
 }
 
 function pihole() {
@@ -53,7 +53,7 @@ function kill() {
 }
 
 function all() {
-    hydra
+    # hydra
     sabnzbd
     sonarr
     radarr

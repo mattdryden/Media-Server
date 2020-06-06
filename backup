@@ -15,7 +15,7 @@ tempPath="/tmp/${date}/"
 user="matt"
 script=$(basename "$0")
 currentPath=$(pwd)
-maxBackups="7"
+maxBackups="6"
 passphrase=""
 
 ## TODO:

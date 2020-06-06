@@ -54,6 +54,7 @@ function configFiles() {
     configNetatalk
     configResolved
     configUfw
+    configNginx
 }
 
 function configCron() {
@@ -89,6 +90,11 @@ function configResolved() {
 function configUfw() {
     mkdir -p ${tempPath}etc/ufw
     rsync -avP /etc/ufw/ ${tempPath}etc/ufw/
+}
+
+function configNginx() {
+    mkdir -p ${tempPath}etc/nginx
+    rsync -avP /etc/nginx/ ${tempPath}etc/nginx/
 }
 
 function patches() {

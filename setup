@@ -49,7 +49,7 @@ function hydra() {
 }
 
 function nginx() {
-    launch_container "nginx" "-e PUID=$PUID -e PGID=$PGID -e TZ=Europe/London -p 80:80 -p 443:443 -v ${CONFIG_PATH}/nginx:/config linuxserver/nginx"
+    launch_container "nginx" "--net=host -e PUID=$PUID -e PGID=$PGID -e TZ=Europe/London -p 80:80 -p 443:443 -v ${CONFIG_PATH}/nginx:/config linuxserver/nginx"
 }
 
 function kill() {

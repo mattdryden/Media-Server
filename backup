@@ -55,7 +55,7 @@ function configFiles() {
     configNetatalk
     configResolved
     configUfw
-    configNginx
+    #configNginx
 }
 
 function configCron() {

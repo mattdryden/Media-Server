@@ -3,6 +3,7 @@
 MEDIA_PATH="/mnt/media/"
 CONFIG_PATH="/mnt/docker/config/"
 DOWNLOAD_PATH="/mnt/downloads/"
+STORAGE_PATH="/mnt/data/"
 PUID=0
 PGID=0
 
@@ -51,6 +52,22 @@ function hydra() {
 function nginx() {
     launch_container "nginx" "--net=host -e PUID=$PUID -e PGID=$PGID -e TZ=Europe/London -p 80:80 -p 443:443 -v ${CONFIG_PATH}/nginx:/config linuxserver/nginx"
 }
+function grafana() {
+    launch_container "influx" "-u $PUID:$PUID -v ${CONFIG_PATH}/grafana:/var/lib/grafana -p 3000:3000 grafana/grafana"
+}
+
+function chronograph() {
+    launch_container "chronograph" "-u $PUID:$PUID -v ${CONFIG_PATH}/chronograf:/var/lib/chronograf -p 8888:8888 chronograf"
+}
+
+function influx() {
+    launch_container "influxdb" "-u $PUID:$PUID -v ${CONFIG_PATH}/influxdb:/var/lib/influxdb -p 8086:8086 influxdb"
+}
+
+function nextcloud() {
+    launch_container "nextcloud" "-e PUID=$PUID -e PGID=$PGID -e TZ=Europe/London -p 82:80 -p 445:443 -v ${CONFIG_PATH}/nextcloud:/config -v ${STORAGE_PATH}/nextcloud:/data linuxserver/nextcloud"
+}
+
 
 function kill() {
     docker rm -f $(docker ps -a -q); docker rmi $(docker images -q)

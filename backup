@@ -52,7 +52,8 @@ function configFiles() {
     configCron
     configMounts
     configSsh
-    configNetatalk
+    # configNetatalk
+    configSamba
     configResolved
     configUfw
     #configNginx
@@ -80,6 +81,11 @@ function configSsh() {
 function configNetatalk() {
     mkdir -p ${tempPath}etc/netatalk
     cp -a /etc/netatalk/afp.conf ${tempPath}etc/netatalk/afp.conf
+}
+
+function configSamba() {
+    mkdir -p ${tempPath}etc/samba
+    cp -a /etc/samba/smb.conf ${tempPath}etc/samba/smb.conf
 }
 
 function configResolved() {

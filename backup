@@ -200,4 +200,4 @@ function main() {
     echo "Backup complete with a size of ${backupSize}"
 }
 
-main
+main >> /var/log/backup/backup.log

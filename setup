@@ -4,8 +4,8 @@ MEDIA_PATH="/mnt/media/"
 CONFIG_PATH="/mnt/docker/config/"
 DOWNLOAD_PATH="/mnt/downloads/"
 STORAGE_PATH="/mnt/data/"
-PUID=0
-PGID=0
+PUID=1000
+PGID=1000
 
 function launch_container() {
     echo "Launching $1!"

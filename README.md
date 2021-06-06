@@ -6,13 +6,10 @@ Tasks I perform on my media server often - initialisation and backup
     ./backup
 ```
 
-# All
+# Docker
 ```bash
-    ./setup all
-```
-
-# Specific
-
-```bash
-    ./setup sonarr
+    mkdir -p downloads/{complete,incomplete}   
+    mkdir -p media/{TV,Movies,Music}   
+    mkdir -p config/{sabnzbd,sonarr,radarr,lidarr,plex}   
+    docker compose up
 ```

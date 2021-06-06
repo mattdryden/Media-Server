@@ -1,0 +1,82 @@
+version: '3.3'
+
+services:
+    sabnzbd:
+        restart: unless-stopped
+        container_name: sabnzbd
+        volumes:
+            - './config/sabnzbd:/config'
+            - './downloads/complete:/complete-downloads'
+            - './downloads/incomplete:/incomplete-downloads'
+        environment:
+            - PGID=1000
+            - PUID=1000
+        ports:
+            - '8080:8080'
+            - '9090:9191'
+        image: linuxserver/sabnzbd
+
+    sonarr:
+        restart: unless-stopped
+        container_name: sonarr
+        links:
+            - 'sabnzbd:sabnzbd'
+        ports:
+            - '8989:8989'
+        environment:
+            - PUID=1000
+            - PGID=1000
+        volumes:
+            - './config/sonarr:/config'
+            - './media/TV/:/tv'
+            - './downloads/complete:/complete-downloads'
+        image: linuxserver/sonarr        
+
+    radarr:
+        restart: unless-stopped
+        container_name: radarr
+        links:
+            - 'sabnzbd:sabnzbd'
+        ports:
+            - '7878:7878'
+        environment:
+            - PUID=1000
+            - PGID=1000
+        volumes:
+            - './config/radarr:/config'
+            - './media/Movies/:/movies'
+            - './downloads/complete:/complete-downloads'
+        image: linuxserver/radarr        
+
+    plex:
+        restart: unless-stopped
+        container_name: plex
+        ports:
+            - '32400:32400'
+        environment:
+            - VERSION=latest
+            - PUID=1000
+            - PGID=1000
+        volumes:
+            - '/tmp:/transcode'
+            - './config/plex:/config'
+            - './media/:/data/media'
+        devices:
+            - '/dev/dri:/dev/dri'
+        image: linuxserver/plex        
+
+    lidarr:
+        restart: unless-stopped
+        container_name: lidarr
+        links:
+            - 'sabnzbd:sabnzbd'
+        ports:
+            - '8686:8686'
+        environment:
+            - PUID=1000
+            - PGID=1000
+        volumes:
+            - './config/lidarr:/config'
+            - './media/Music/:/music'
+            - './downloads/complete/:/complete-downloads'
+        image: linuxserver/lidarr        
